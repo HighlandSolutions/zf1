@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * PATCHLOG
+ * PatchId:20200409101900_fix_count_generates_warning
+ * PatchDesc:Avoid PHP Warning count() of non-array using PHP 7.2
+ */
+
 /**
  * Zend Framework
  *
@@ -1302,13 +1309,13 @@ abstract class Zend_Db_Table_Abstract
         $whereList = array();
         $numberTerms = 0;
         foreach ($args as $keyPosition => $keyValues) {
-            $keyValuesCount = count($keyValues);
             // Coerce the values to an array.
             // Don't simply typecast to array, because the values
             // might be Zend_Db_Expr objects.
             if (!is_array($keyValues)) {
                 $keyValues = array($keyValues);
             }
+            $keyValuesCount = count($keyValues); // 20200409101900_fix_count_generates_warning moved to here to ensure $keyValues is an array
             if ($numberTerms == 0) {
                 $numberTerms = $keyValuesCount;
             } else if ($keyValuesCount != $numberTerms) {
