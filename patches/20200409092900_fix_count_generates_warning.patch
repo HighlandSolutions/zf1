@@ -1,0 +1,43 @@
+From 0ca9b2534c3c1d5fdd7924bf83532c6797716d35 Mon Sep 17 00:00:00 2001
+From: Stu Heiss <sheiss@highlandsolutions.com>
+Date: Thu, 9 Apr 2020 13:17:57 -0500
+Subject: [PATCH] Avoid PHP Warning count() of non-array using PHP 7.2
+
+---
+ library/Zend/Db/Table/Abstract.php | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/library/Zend/Db/Table/Abstract.php b/library/Zend/Db/Table/Abstract.php
+index fc300d5b7..080626128 100644
+--- a/library/Zend/Db/Table/Abstract.php
++++ b/library/Zend/Db/Table/Abstract.php
+@@ -1,4 +1,11 @@
+ <?php
++
++/**
++ * PATCHLOG
++ * PatchId:20200409101900_fix_count_generates_warning
++ * PatchDesc:Avoid PHP Warning count() of non-array using PHP 7.2
++ */
++
+ /**
+  * Zend Framework
+  *
+@@ -1302,13 +1309,13 @@ abstract class Zend_Db_Table_Abstract
+         $whereList = array();
+         $numberTerms = 0;
+         foreach ($args as $keyPosition => $keyValues) {
+-            $keyValuesCount = count($keyValues);
+             // Coerce the values to an array.
+             // Don't simply typecast to array, because the values
+             // might be Zend_Db_Expr objects.
+             if (!is_array($keyValues)) {
+                 $keyValues = array($keyValues);
+             }
++            $keyValuesCount = count($keyValues); // 20200409101900_fix_count_generates_warning moved to here to ensure $keyValues is an array
+             if ($numberTerms == 0) {
+                 $numberTerms = $keyValuesCount;
+             } else if ($keyValuesCount != $numberTerms) {
+-- 
+2.26.0
+
